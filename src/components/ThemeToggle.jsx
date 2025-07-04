@@ -16,7 +16,7 @@ export const ThemeToggle = () => {
                 setIsDarkMode(false);
             }
         }
-    })
+    }, [])
 
     const toggleTheme = () => {
         if (isDarkMode) {
