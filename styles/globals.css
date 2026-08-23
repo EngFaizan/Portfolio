@@ -1,12 +1,25 @@
 /* ==========================================================================
    Design tokens
+
+   Colour is split out into the two theme blocks below; everything else —
+   type, space, motion, layout — is shared, because none of it changes with
+   the theme.
+
+   Six colours carry the whole site, and every translucent fill is derived
+   from their channel forms rather than hardcoded. That is what lets the
+   theme swap work: redefine six values on :root and the glass, hairlines,
+   scrims, and selection colour all follow, because custom properties
+   resolve against the element they are used on.
+   ========================================================================== */
+
+/* --- Dark: the design's native state, and the default --------------------
    The palette is sampled from the avatar render itself: the desk lamp is
    --ember, the monitors are --monitor. Those two lights are the only accents
    on the entire site.
-   ========================================================================== */
+   ------------------------------------------------------------------------- */
 
-:root {
-  /* Colour ---------------------------------------------------------------- */
+:root,
+:root[data-theme='dark'] {
   --ink: #0a0c0f;
   --surface: #13171e;
   --ember: #ff8a3d;
@@ -14,14 +27,43 @@
   --bone: #efe9e1;
   --muted: #8b939f;
 
-  /* Channel forms, for translucent fills without hardcoding rgba() strings. */
   --ink-rgb: 10, 12, 15;
   --surface-rgb: 19, 23, 30;
   --ember-rgb: 255, 138, 61;
   --monitor-rgb: 79, 163, 255;
   --bone-rgb: 239, 233, 225;
 
-  /* Glass ----------------------------------------------------------------- */
+  color-scheme: dark;
+}
+
+/* --- Light: the same room at midday ---------------------------------------
+   Not an inversion. --ink and --bone swap roles (page vs. text), and both
+   accents are darkened until they carry their weight against paper — the
+   dark theme's #ff8a3d sits at about 2:1 on a light background, which is
+   unreadable for the small uppercase labels it is used on. These land above
+   5:1. Warm paper rather than white, so the lamp still belongs here.
+   ------------------------------------------------------------------------- */
+
+:root[data-theme='light'] {
+  --ink: #f5f1ea;
+  --surface: #fffdfa;
+  --ember: #b8480b;
+  --monitor: #14539e;
+  --bone: #16191f;
+  --muted: #59626e;
+
+  --ink-rgb: 245, 241, 234;
+  --surface-rgb: 255, 253, 250;
+  --ember-rgb: 184, 72, 11;
+  --monitor-rgb: 20, 83, 158;
+  --bone-rgb: 22, 25, 31;
+
+  color-scheme: light;
+}
+
+:root {
+  /* Glass — derived from the foreground, so it inverts with the theme for
+     free: a light film on dark, a soft shadow-tint on paper. */
   --glass-fill: rgba(var(--bone-rgb), 0.055);
   --glass-fill-hover: rgba(var(--bone-rgb), 0.09);
   --glass-border: rgba(var(--bone-rgb), 0.14);
@@ -64,8 +106,6 @@
 
   --radius: 0.75rem;
   --radius-pill: 999px;
-
-  color-scheme: dark;
 }
 
 /* ==========================================================================

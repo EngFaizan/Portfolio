@@ -1,0 +1,91 @@
+/* Mirrors the wordmark opposite it: same top offset, same gutter, one step
+   above it in the stack so nothing can ever cover the control. */
+.toggle {
+  position: fixed;
+  top: clamp(1.1rem, 3vw, 2.2rem);
+  right: var(--gutter);
+  z-index: 70;
+
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-pill);
+
+  color: var(--bone);
+  background: rgba(var(--ink-rgb), 0.55);
+  border: 1px solid var(--glass-border);
+  /* No hand-written -webkit- twin — see GlassButton.module.css. */
+  backdrop-filter: blur(12px) saturate(1.2);
+
+  transition:
+    background-color var(--dur-base) var(--ease-cinematic),
+    border-color var(--dur-base) var(--ease-cinematic),
+    transform var(--dur-base) var(--ease-cinematic);
+}
+
+.toggle:hover {
+  background: rgba(var(--ink-rgb), 0.75);
+  border-color: rgba(var(--ember-rgb), 0.45);
+  transform: translateY(-1px);
+}
+
+.toggle:active {
+  transform: translateY(0);
+}
+
+/* The two icons stack, so the swap is a cross-fade rather than a reflow. */
+.icons {
+  position: relative;
+  display: block;
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.sun,
+.moon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition:
+    opacity var(--dur-base) var(--ease-cinematic),
+    transform var(--dur-base) var(--ease-cinematic);
+}
+
+/* Each icon shows the theme you are switching TO, not the one you are in.
+   Dark now → offer the sun. */
+.sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+  color: var(--ember);
+}
+
+.moon {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+
+:root[data-theme='light'] .sun {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+:root[data-theme='light'] .moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+  color: var(--monitor);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sun,
+  .moon {
+    transition: opacity 0.01ms;
+    transform: none;
+  }
+
+  :root[data-theme='light'] .sun,
+  :root[data-theme='light'] .moon {
+    transform: none;
+  }
+}

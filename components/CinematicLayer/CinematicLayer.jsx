@@ -5,12 +5,19 @@ import * as THREE from 'three';
 
 /**
  * Ambient bokeh field on a transparent canvas — above the avatar plate, below
- * the text. Warm ember and soft bone particles, additive, very defocused.
+ * the text. Warm ember and soft bone particles, very defocused.
  *
  * Self-contained: builds its own sprite texture, owns its rAF loop, and
  * disposes every geometry, material, texture and the renderer on unmount.
  *
  * It is the caller's job not to mount this under `prefers-reduced-motion`.
+ *
+ * The theme changes how the field is drawn, not just its colour. Additive
+ * blending adds light, so on paper it converges on white and the particles
+ * simply vanish — the effect is invisible in light mode unless the blend mode
+ * changes too. Light mode therefore draws them normally, in ember only, at a
+ * lower opacity: ember is mid-luminance, so it holds up both over the dark
+ * plate and over the lightened left of the frame.
  */
 
 const COUNT_DESKTOP = 90;
@@ -41,10 +48,11 @@ function createSpriteTexture() {
   return texture;
 }
 
-export default function CinematicLayer({ className = '' }) {
+export default function CinematicLayer({ className = '', theme = 'dark' }) {
   const hostRef = useRef(null);
 
   useEffect(() => {
+    const isLight = theme === 'light';
     const host = hostRef.current;
     if (!host) return;
 
@@ -96,8 +104,9 @@ export default function CinematicLayer({ className = '' }) {
       positions[i * 3 + 1] = (Math.random() - 0.5) * spread * 0.75;
       positions[i * 3 + 2] = z;
 
-      // Mostly ember, a minority of cool bone highlights.
-      tint.copy(Math.random() < 0.68 ? ember : bone);
+      // Mostly ember, a minority of cool bone highlights. Bone is dropped in
+      // light mode — a near-white particle on paper is nothing at all.
+      tint.copy(!isLight && Math.random() >= 0.68 ? bone : ember);
       // Vary luminance so they do not read as one flat colour.
       tint.multiplyScalar(0.55 + Math.random() * 0.45);
       colors[i * 3] = tint.r;
@@ -132,8 +141,8 @@ export default function CinematicLayer({ className = '' }) {
       map: sprite,
       vertexColors: true,
       transparent: true,
-      opacity: 0.85,
-      blending: THREE.AdditiveBlending,
+      opacity: isLight ? 0.5 : 0.85,
+      blending: isLight ? THREE.NormalBlending : THREE.AdditiveBlending,
       depthWrite: false,
       sizeAttenuation: true,
     });
@@ -267,7 +276,10 @@ export default function CinematicLayer({ className = '' }) {
         host.removeChild(renderer.domElement);
       }
     };
-  }, []);
+    // Rebuilt on a theme change: blending and vertex colours are baked into
+    // the material and geometry, and a theme switch is rare enough that
+    // tearing the field down and back up is cheaper than mutating both.
+  }, [theme]);
 
   return <div ref={hostRef} className={className} aria-hidden="true" />;
 }

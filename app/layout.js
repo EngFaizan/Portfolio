@@ -2,6 +2,8 @@ import { Instrument_Serif, Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { profile } from '@/lib/content';
+import { themeInitScript, THEME_COLOR } from '@/lib/theme';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import '@/styles/globals.css';
 
 /** Display face — the stacked name and section titles. Used with restraint. */
@@ -71,14 +73,30 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: '#0a0c0f',
-  colorScheme: 'dark',
+  // Dark is the served default; ThemeToggle rewrites this meta tag when the
+  // reader switches, so the phone's browser chrome tracks the page.
+  themeColor: THEME_COLOR.dark,
+  colorScheme: 'dark light',
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html
+      lang="en"
+      // Dark is what the server renders. The script below corrects it during
+      // parsing when the reader has chosen otherwise, which is a deliberate
+      // server/client difference rather than a bug.
+      data-theme="dark"
+      suppressHydrationWarning
+      className={`${display.variable} ${body.variable}`}
+    >
+      <head>
+        {/* Must stay inline and in <head>: it runs while the HTML is being
+            parsed, so the right theme is in place before the first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body>
+        <ThemeToggle />
         {children}
         {/* Vercel Web Analytics and Speed Insights. Both render nothing; they
             inject their scripts and report per route — pageviews for the

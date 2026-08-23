@@ -93,3 +93,30 @@
     animation: none;
   }
 }
+
+/* ==========================================================================
+   Light theme
+
+   The washes still work — --ember and --monitor darken with the theme, so
+   these become a warm and a cool stain on paper rather than glows in the
+   dark. But a dark pigment at the dark theme's alpha reads as dirt, so both
+   are pulled well back.
+   ========================================================================== */
+
+:root[data-theme='light'] .lamp {
+  background: radial-gradient(
+    circle,
+    rgba(var(--ember-rgb), 0.05) 0%,
+    rgba(var(--ember-rgb), 0.018) 42%,
+    transparent 70%
+  );
+}
+
+:root[data-theme='light'] .screens {
+  background: radial-gradient(
+    circle,
+    rgba(var(--monitor-rgb), 0.04) 0%,
+    rgba(var(--monitor-rgb), 0.015) 44%,
+    transparent 70%
+  );
+}

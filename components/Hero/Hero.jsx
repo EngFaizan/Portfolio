@@ -8,6 +8,7 @@ import avatarImg from '@/public/avatar.jpg';
 import { profile, resumeFile } from '@/lib/content';
 import { heroTimeline, scrollToSection } from '@/lib/animations';
 import { useReducedMotion, useAfterPaint } from '@/lib/useReducedMotion';
+import { useTheme } from '@/lib/useTheme';
 import GlassButton from '@/components/ui/GlassButton';
 import ScrollIndicator from '@/components/ui/ScrollIndicator';
 import styles from './Hero.module.css';
@@ -28,6 +29,7 @@ const DEPTH = {
 export default function Hero() {
   const reduced = useReducedMotion();
   const painted = useAfterPaint();
+  const theme = useTheme();
 
   const sectionRef = useRef(null);
   const backdropRef = useRef(null);
@@ -177,7 +179,9 @@ export default function Hero() {
       <div className={styles.scrim} aria-hidden="true" />
 
       {/* 4 — Three.js bokeh: above the plate, below the text. */}
-      {showCinematicLayer && <CinematicLayer className={styles.canvasLayer} />}
+      {showCinematicLayer && (
+        <CinematicLayer className={styles.canvasLayer} theme={theme} />
+      )}
 
       {/* 6 — Fine film grain. */}
       <GrainOverlay />

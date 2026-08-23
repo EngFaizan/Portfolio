@@ -430,3 +430,31 @@
     opacity: 0;
   }
 }
+
+/* ==========================================================================
+   Light theme
+
+   Most of the hero needs nothing here: the vignette and scrim are built from
+   rgba(var(--ink-rgb), …), so when --ink becomes paper they stop darkening
+   the frame and start lightening it — exactly the right direction, since the
+   text over them has flipped to dark too.
+
+   What does need adjusting is the ambient backdrop, which was explicitly
+   dimmed for a dark page, and the grain, which is far more visible on paper.
+
+   The avatar plate itself stays a dark photograph. That is intentional: it
+   reads as a framed image bleeding into a light page rather than as a hole in
+   it, and it keeps the room recognisably the same room in both themes.
+   ========================================================================== */
+
+:root[data-theme='light'] .backdropImg {
+  /* brightness(0.62) existed to sink this behind a near-black page. Against
+     paper the same value reads as a grey smear. */
+  filter: blur(52px) saturate(0.5) brightness(1.2);
+  opacity: 0.42;
+}
+
+:root[data-theme='light'] .grain {
+  /* Overlay grain is much louder on a light ground. */
+  opacity: 0.03;
+}

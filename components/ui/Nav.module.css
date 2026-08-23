@@ -164,3 +164,15 @@
     transform: none;
   }
 }
+
+/* --- Light theme -----------------------------------------------------------
+   `difference` blending is what keeps this mark legible over the dark hero
+   photograph, but against paper it inverts to near-white and the mark all but
+   disappears. On light there is nothing to fight — the mark sits over the
+   page background — so blend normally and just use the foreground colour.
+   -------------------------------------------------------------------------- */
+
+:root[data-theme='light'] .wordmark {
+  mix-blend-mode: normal;
+  color: var(--bone);
+}
