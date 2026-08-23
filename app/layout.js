@@ -1,4 +1,5 @@
 import { Instrument_Serif, Inter } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import { profile } from '@/lib/content';
 import '@/styles/globals.css';
 
@@ -76,7 +77,12 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/* Vercel Web Analytics. Renders nothing; injects the script and reports
+            a pageview per route. No-op outside a Vercel deployment. */}
+        <Analytics />
+      </body>
     </html>
   );
 }
