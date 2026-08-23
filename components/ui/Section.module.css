@@ -1,0 +1,29 @@
+.section {
+  position: relative;
+  z-index: 1;
+  padding-block: var(--space-section);
+  padding-inline: var(--gutter);
+}
+
+.inner {
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.wide {
+  max-width: 84rem;
+}
+
+.header {
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.title {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-size: var(--step-5);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--bone);
+  margin-top: var(--space-xs);
+}

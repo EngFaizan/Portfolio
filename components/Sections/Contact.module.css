@@ -1,0 +1,110 @@
+.intro {
+  max-width: 46ch;
+  font-size: var(--step-2);
+  line-height: 1.55;
+  color: var(--muted);
+  margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+/* --- Channels ------------------------------------------------------------- */
+
+.channels {
+  display: grid;
+  /* min() keeps the track from forcing overflow at narrow widths. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  column-gap: clamp(1.5rem, 3vw, 2.5rem);
+  row-gap: 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.channel {
+  /* Without this a long address (the email) blows out its grid track. */
+  min-width: 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.link {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: var(--space-s) 0;
+  overflow: hidden;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color var(--dur-base) var(--ease-cinematic);
+}
+
+.value {
+  /* step-1 forced the email address to break mid-word in a four-up row. */
+  font-size: var(--step-0);
+  line-height: 1.45;
+  color: var(--bone);
+  overflow-wrap: anywhere;
+  transition: color var(--dur-base) var(--ease-cinematic);
+}
+
+/* An ember underline that draws in from the left. Transform only. */
+.rule {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--ember);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-slow) var(--ease-cinematic);
+}
+
+.link:hover .rule,
+.link:focus-visible .rule {
+  transform: scaleX(1);
+}
+
+.link:hover .label {
+  color: var(--ember);
+}
+
+/* --- CTA + footer --------------------------------------------------------- */
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-s);
+  margin-top: clamp(4rem, 9vw, 7rem);
+  padding-top: var(--space-m);
+  border-top: 1px solid var(--hairline);
+  font-size: var(--step--1);
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.year {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rule {
+    transition: none;
+  }
+
+  .link:hover .rule,
+  .link:focus-visible .rule {
+    transform: scaleX(1);
+  }
+}

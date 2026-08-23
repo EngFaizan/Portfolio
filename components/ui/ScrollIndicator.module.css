@@ -1,0 +1,71 @@
+.indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-s);
+  color: var(--muted);
+  transition: color var(--dur-base) var(--ease-cinematic);
+}
+
+.indicator:hover {
+  color: var(--bone);
+}
+
+.label {
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  /* Optical correction for the letter-spacing on the trailing character. */
+  text-indent: 0.3em;
+}
+
+.track {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 3.5rem;
+  overflow: hidden;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--bone-rgb), 0.22),
+    rgba(var(--bone-rgb), 0)
+  );
+}
+
+/* The travelling highlight. */
+.pulse {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 45%;
+  background: linear-gradient(to bottom, transparent, var(--ember));
+  transform: translateY(-100%);
+  animation: fall 2.6s var(--ease-soft) infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(240%);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+}

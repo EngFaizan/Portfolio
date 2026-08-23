@@ -1,0 +1,95 @@
+/* Keyboard users land here first. */
+.skip {
+  position: absolute;
+  top: -100%;
+  left: var(--gutter);
+  z-index: 100;
+  padding: 0.7em 1.2em;
+  border-radius: var(--radius-pill);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  background: var(--ember);
+}
+
+.skip:focus {
+  top: var(--space-s);
+}
+
+/* ==========================================================================
+   The signature element — "the room's light escapes the frame".
+
+   Two fixed, very low-opacity washes standing in for the avatar's practical
+   lights: the desk lamp upper-left, the monitors centre-right. They breathe on
+   long, offset cycles so the page below the hero never feels like flat paper.
+   The hero paints over them with its own opaque base.
+   ========================================================================== */
+
+.roomLight {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.lamp,
+.screens {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(20px);
+}
+
+.lamp {
+  top: -18vh;
+  left: -12vw;
+  width: 68vw;
+  height: 68vw;
+  background: radial-gradient(
+    circle,
+    rgba(var(--ember-rgb), 0.09) 0%,
+    rgba(var(--ember-rgb), 0.035) 42%,
+    transparent 70%
+  );
+  animation: breathe 26s ease-in-out infinite alternate;
+}
+
+.screens {
+  top: 30vh;
+  right: -22vw;
+  width: 74vw;
+  height: 74vw;
+  background: radial-gradient(
+    circle,
+    rgba(var(--monitor-rgb), 0.07) 0%,
+    rgba(var(--monitor-rgb), 0.028) 44%,
+    transparent 70%
+  );
+  animation: breathe 34s ease-in-out infinite alternate-reverse;
+  animation-delay: -8s;
+}
+
+@keyframes breathe {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.75;
+  }
+  to {
+    transform: translate3d(2vw, -3vh, 0) scale(1.14);
+    opacity: 1;
+  }
+}
+
+/* Establishes the stacking context the sections sit in, above the wash. */
+.below {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp,
+  .screens {
+    animation: none;
+  }
+}

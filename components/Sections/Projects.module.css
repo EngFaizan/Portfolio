@@ -1,0 +1,161 @@
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(14rem, 20rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding-block: clamp(2.25rem, 4vw, 3.5rem);
+  border-top: 1px solid var(--hairline);
+  transition: border-color var(--dur-slow) var(--ease-cinematic);
+}
+
+.row:last-child {
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* Warms the rule as you read down a row — slow, no movement. */
+.row:hover {
+  border-color: rgba(var(--ember-rgb), 0.32);
+}
+
+/* --- Left rail ------------------------------------------------------------ */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.name {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-size: var(--step-3);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--bone);
+}
+
+.subtitle {
+  font-size: var(--step--1);
+  line-height: 1.45;
+  color: var(--monitor);
+}
+
+.org {
+  margin-top: var(--space-2xs);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.period {
+  font-size: var(--step--1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(var(--bone-rgb), 0.4);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;
+  margin-top: var(--space-xs);
+  padding: 0.4em 0.9em;
+  border-radius: var(--radius-pill);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  color: var(--bone);
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  transition:
+    background-color var(--dur-base) var(--ease-cinematic),
+    border-color var(--dur-base) var(--ease-cinematic);
+}
+
+.link:hover {
+  background: rgba(var(--ember-rgb), 0.14);
+  border-color: rgba(var(--ember-rgb), 0.45);
+}
+
+.arrow {
+  font-size: 0.85em;
+  color: var(--ember);
+}
+
+/* --- Right column --------------------------------------------------------- */
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.description {
+  max-width: var(--measure);
+  font-size: var(--step-1);
+  line-height: 1.6;
+  color: var(--bone);
+}
+
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-width: var(--measure);
+}
+
+.bullet {
+  position: relative;
+  padding-left: 1.15rem;
+  font-size: var(--step--1);
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.bullet::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.82em;
+  width: 6px;
+  height: 1px;
+  background: rgba(var(--bone-rgb), 0.3);
+}
+
+.tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: var(--space-2xs);
+}
+
+.tag {
+  padding: 0.28em 0.7em;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  background: rgba(var(--surface-rgb), 0.9);
+  border: 1px solid var(--hairline);
+  transition: color var(--dur-base) var(--ease-cinematic);
+}
+
+.row:hover .tag {
+  color: rgba(var(--bone-rgb), 0.85);
+}
+
+/* --- Breakpoints ---------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: var(--space-m);
+  }
+
+  .rail {
+    gap: 0.2rem;
+  }
+}

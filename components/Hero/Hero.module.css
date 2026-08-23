@@ -1,0 +1,425 @@
+/* ==========================================================================
+   The hero. This is the one place the site spends its boldness.
+   Layer order, back to front:
+     backdrop → plate (+ sweep) → vignette/scrim → canvas → grain → content
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  height: 100vh;
+  height: 100svh;
+  min-height: 34rem;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+/* --- 1. Ambient backdrop ---------------------------------------------------
+   A blown-up, defocused, desaturated duplicate of the same frame. This is what
+   gives the page its colour bleed and depth — the job a video background would
+   otherwise have done.
+   -------------------------------------------------------------------------- */
+
+.backdropWrap {
+  position: absolute;
+  /* Over-sized so parallax never exposes an edge. */
+  inset: -8%;
+  z-index: 0;
+  will-change: transform;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  animation: drift 42s ease-in-out infinite alternate;
+}
+
+.backdropImg {
+  object-fit: cover;
+  object-position: 50% 28%;
+  filter: blur(52px) saturate(0.55) brightness(0.62);
+  transform: scale(1.35);
+  opacity: 0.9;
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(-1.5%, -1%, 0) scale(1.04);
+  }
+  to {
+    transform: translate3d(1.5%, 1.5%, 0) scale(1.1);
+  }
+}
+
+/* --- 2. The avatar plate ---------------------------------------------------
+   Anchored bottom-right and bleeding off both edges, so the room reads as
+   larger than the viewport. Feathered on every side that stays in frame.
+   -------------------------------------------------------------------------- */
+
+.plateWrap {
+  position: absolute;
+  top: 0;
+  right: -3%;
+  bottom: -2%;
+  width: 58%;
+  z-index: 1;
+  will-change: transform;
+}
+
+.plate {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  /* Two gradients intersected: a hard left-edge dissolve into the page, and a
+     softer top/bottom falloff. Without this the plate reads as a rectangle
+     pasted on the page rather than light in a room. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 14%, #000 40%),
+    linear-gradient(to bottom, transparent 0%, #000 16%, #000 68%, transparent 99%);
+  mask-image:
+    linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 14%, #000 40%),
+    linear-gradient(to bottom, transparent 0%, #000 16%, #000 68%, transparent 99%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+.plateImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 16%;
+}
+
+/* --- 5. Light sweep --------------------------------------------------------
+   A soft warm highlight crossing the plate roughly every 12 seconds.
+   -------------------------------------------------------------------------- */
+
+.sweep {
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 42%;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    rgba(var(--ember-rgb), 0) 0%,
+    rgba(var(--ember-rgb), 0.13) 42%,
+    rgba(var(--bone-rgb), 0.16) 52%,
+    rgba(var(--ember-rgb), 0.1) 62%,
+    rgba(var(--ember-rgb), 0) 100%
+  );
+  mix-blend-mode: screen;
+  filter: blur(14px);
+  opacity: 0;
+  animation: sweep 12s var(--ease-soft) infinite;
+}
+
+@keyframes sweep {
+  0% {
+    transform: translate3d(-160%, 0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  26% {
+    opacity: 0.85;
+  }
+  36% {
+    transform: translate3d(300%, 0, 0);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(300%, 0, 0);
+    opacity: 0;
+  }
+}
+
+/* --- 3. Vignette and scrim -------------------------------------------------
+   Text has to stay readable wherever the plate happens to crop.
+   -------------------------------------------------------------------------- */
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      130% 90% at 50% 45%,
+      transparent 38%,
+      rgba(var(--ink-rgb), 0.55) 100%
+    ),
+    linear-gradient(to bottom, rgba(var(--ink-rgb), 0.78) 0%, transparent 26%);
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    /* Reads the name against the plate on wide screens. */
+    linear-gradient(
+      to right,
+      rgba(var(--ink-rgb), 0.94) 0%,
+      rgba(var(--ink-rgb), 0.72) 34%,
+      rgba(var(--ink-rgb), 0.12) 62%,
+      transparent 78%
+    ),
+    /* Grounds the whole frame and hands off to the section below. */
+    linear-gradient(to bottom, transparent 55%, rgba(var(--ink-rgb), 0.86) 88%, var(--ink) 100%);
+}
+
+/* --- 4. Three.js canvas ---------------------------------------------------- */
+
+.canvasLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.canvasLayer canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- 6. Film grain --------------------------------------------------------- */
+
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+}
+
+/* --- 7. Content ------------------------------------------------------------ */
+
+.contentWrap {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-inline: var(--gutter);
+  /* Reserves the fixed wordmark's corner, so the vertically-centred block can
+     never ride up into it on a short viewport. */
+  padding-top: clamp(5rem, 10vh, 7rem);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.content {
+  max-width: 42rem;
+  pointer-events: auto;
+}
+
+.tagline {
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ember);
+  text-indent: 0.32em;
+  margin-bottom: var(--space-m);
+}
+
+.name {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  /* Two stacked lines at full display size can outgrow a short viewport, so
+     cap against height as well as width. */
+  font-size: min(var(--step-display), 17vh);
+  font-weight: 400;
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+  margin-bottom: var(--space-m);
+}
+
+.nameLine {
+  display: block;
+  /* Optical: the display face sits slightly right of the body text otherwise. */
+  margin-left: -0.03em;
+}
+
+.role {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-xs);
+  font-size: var(--step-1);
+  line-height: 1.4;
+  color: var(--bone);
+  margin-bottom: var(--space-xs);
+}
+
+.roleDivider {
+  width: 1.6rem;
+  height: 1px;
+  flex: none;
+  background: rgba(var(--bone-rgb), 0.32);
+}
+
+.roleSpec {
+  color: var(--muted);
+}
+
+.location {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: var(--space-l);
+}
+
+.pin {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--monitor);
+  box-shadow: 0 0 10px rgba(var(--monitor-rgb), 0.8);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+/* --- Chrome ---------------------------------------------------------------- */
+
+.chrome {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(0.75rem, 2.5vh, 1.75rem);
+  z-index: 6;
+  transform: translateX(-50%);
+}
+
+/* ==========================================================================
+   Breakpoints
+   ========================================================================== */
+
+/* Tablet — the plate loses the left-scrim contest, so lighten the name column
+   and let the image sit further right. */
+@media (max-width: 1279px) {
+  .plateWrap {
+    width: 66%;
+    right: -8%;
+  }
+
+  .content {
+    max-width: 32rem;
+  }
+}
+
+/* Mobile — the plate goes full-bleed behind everything and crops tighter to
+   the face, so Faizan never reads as a small figure in a wide room. Content
+   drops to the lower third with a much heavier scrim under it. */
+@media (max-width: 767px) {
+  .hero {
+    min-height: 40rem;
+  }
+
+  .plateWrap {
+    inset: 0;
+    width: 100%;
+  }
+
+  .plate {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 42%,
+      rgba(0, 0, 0, 0.35) 68%,
+      transparent 86%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 42%,
+      rgba(0, 0, 0, 0.35) 68%,
+      transparent 86%
+    );
+    -webkit-mask-composite: source-over;
+    mask-composite: add;
+  }
+
+  .plateImg {
+    /* At phone aspect ratios `cover` crops the sides, not the top and bottom,
+       so vertical framing is set by the scale origin rather than by
+       object-position. A lower origin lifts the face clear of the name. */
+    object-position: 50% 0%;
+    transform: scale(1.26);
+    transform-origin: 50% 46%;
+  }
+
+  .scrim {
+    background: linear-gradient(
+      to bottom,
+      rgba(var(--ink-rgb), 0.5) 0%,
+      rgba(var(--ink-rgb), 0.12) 22%,
+      rgba(var(--ink-rgb), 0.72) 52%,
+      rgba(var(--ink-rgb), 0.96) 72%,
+      var(--ink) 100%
+    );
+  }
+
+  .contentWrap {
+    align-items: flex-end;
+    padding-bottom: clamp(4.5rem, 14vh, 7rem);
+  }
+
+  .content {
+    max-width: 100%;
+  }
+
+  .name {
+    line-height: 0.9;
+  }
+
+  .role {
+    font-size: var(--step-0);
+  }
+
+  .controls {
+    gap: var(--space-xs);
+  }
+
+  .sweep {
+    width: 70%;
+  }
+}
+
+/* Very short landscape phones — drop the scroll cue rather than crowd it. */
+@media (max-height: 560px) and (orientation: landscape) {
+  .chrome {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion — everything ambient stops. The composition still holds.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop {
+    animation: none;
+  }
+
+  .sweep {
+    animation: none;
+    opacity: 0;
+  }
+}
