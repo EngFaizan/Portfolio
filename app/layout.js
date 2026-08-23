@@ -18,7 +18,7 @@ const body = Inter({
   variable: '--font-body',
 });
 
-const SITE_URL = 'https://faizan-yousaf.vercel.app';
+const SITE_URL = 'https://engineer-faizan-yousaf.vercel.app';
 const description = profile.summary;
 
 export const metadata = {
