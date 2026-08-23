@@ -1,5 +1,6 @@
 import { Instrument_Serif, Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { profile } from '@/lib/content';
 import '@/styles/globals.css';
 
@@ -79,9 +80,12 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body>
         {children}
-        {/* Vercel Web Analytics. Renders nothing; injects the script and reports
-            a pageview per route. No-op outside a Vercel deployment. */}
+        {/* Vercel Web Analytics and Speed Insights. Both render nothing; they
+            inject their scripts and report per route — pageviews for the
+            first, real-user Core Web Vitals for the second. Both are no-ops
+            outside a Vercel deployment. */}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
