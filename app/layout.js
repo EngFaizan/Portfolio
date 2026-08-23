@@ -53,10 +53,15 @@ export const metadata = {
     description,
     images: [
       {
-        url: '/avatar.jpg',
-        width: 768,
-        height: 1376,
-        alt: `${profile.fullName} at his desk`,
+        // NOTE: this is the cut-out portrait, so it has a transparent
+        // background — each platform will composite it over its own colour,
+        // and at 440x566 it is well under the 1200x630 that link previews
+        // want. A dedicated opaque OG card is the proper fix; this at least
+        // shows the real face rather than the old avatar.
+        url: '/faizan-yousaf.png',
+        width: 440,
+        height: 566,
+        alt: profile.fullName,
       },
     ],
   },
@@ -64,7 +69,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: `${profile.fullName} — ${profile.role}`,
     description,
-    images: ['/avatar.jpg'],
+    images: ['/faizan-yousaf.png'],
   },
   robots: {
     index: true,

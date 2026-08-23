@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 
-import avatarImg from '@/public/avatar.jpg';
+import portraitImg from '@/public/faizan-yousaf.png';
 import { profile, resumeFile } from '@/lib/content';
 import { heroTimeline, scrollToSection } from '@/lib/animations';
 import { useReducedMotion, useAfterPaint } from '@/lib/useReducedMotion';
@@ -141,35 +141,27 @@ export default function Hero() {
 
   return (
     <section className={styles.hero} ref={sectionRef} aria-label="Introduction">
-      {/* 1 — Ambient backdrop: the same frame, blown up and defocused, so the
-             room's colour bleeds past the edges of the plate. */}
-      <div className={styles.backdropWrap} ref={backdropRef} aria-hidden="true">
-        <div className={styles.backdrop}>
-          <Image
-            src={avatarImg}
-            alt=""
-            fill
-            sizes="100vw"
-            quality={35}
-            priority
-            className={styles.backdropImg}
-          />
-        </div>
+      {/* 1 — Ambient glow. Light rather than a blurred copy of the frame:
+             a cut-out has no room behind it to defocus. */}
+      <div className={styles.glowWrap} ref={backdropRef} aria-hidden="true">
+        <span className={styles.glow} />
       </div>
 
-      {/* 2 — The avatar plate. Feathered so it dissolves into the page. */}
+      {/* 2 — The portrait. Transparent PNG, so the page colour shows through
+             and the photograph never fights the active theme. */}
       <div className={styles.plateWrap} ref={plateRef}>
         <div className={styles.plate} ref={plateInnerRef}>
           <Image
-            src={avatarImg}
-            alt={`${profile.fullName}, ${profile.role}, at his desk — warm lamp to one side, code and dashboards on the monitors behind him.`}
+            src={portraitImg}
+            alt={`${profile.fullName}, ${profile.role}`}
             priority
             placeholder="blur"
-            sizes="(max-width: 767px) 100vw, (max-width: 1279px) 60vw, 46vw"
+            /* All viewport-relative: Next parses `sizes` to choose a srcset
+               candidate, and a fixed rem value there made it settle on a 297px
+               file for a ~458px slot. */
+            sizes="(max-width: 767px) 46vw, (max-width: 1279px) 33vw, 28vw"
             className={styles.plateImg}
           />
-          {/* 5 — Slow warm light sweep, once every ~12s. */}
-          <span className={styles.sweep} aria-hidden="true" />
         </div>
       </div>
 

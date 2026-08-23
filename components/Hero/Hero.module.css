@@ -1,7 +1,7 @@
 /* ==========================================================================
    The hero. This is the one place the site spends its boldness.
    Layer order, back to front:
-     backdrop → plate (+ sweep) → vignette/scrim → canvas → grain → content
+     glow → portrait → vignette/scrim → canvas → grain → content
    ========================================================================== */
 
 .hero {
@@ -14,54 +14,69 @@
   background: var(--ink);
 }
 
-/* --- 1. Ambient backdrop ---------------------------------------------------
-   A blown-up, defocused, desaturated duplicate of the same frame. This is what
-   gives the page its colour bleed and depth — the job a video background would
-   otherwise have done.
+/* --- 1. Ambient glow -------------------------------------------------------
+   This layer used to be a blown-up, defocused duplicate of the avatar's room,
+   and that duplicate is what gave the page its colour bleed. A cut-out
+   portrait has no room to blur — defocusing it just yields a ghost of the
+   same head — so the depth comes from light instead: a soft pool for him to
+   stand in, built from the same two accent tokens, so it re-themes with
+   everything else and never hardcodes a backdrop.
    -------------------------------------------------------------------------- */
 
-.backdropWrap {
+.glowWrap {
   position: absolute;
-  /* Over-sized so parallax never exposes an edge. */
-  inset: -8%;
+  inset: 0;
   z-index: 0;
+  pointer-events: none;
   will-change: transform;
 }
 
-.backdrop {
+.glow {
   position: absolute;
-  inset: 0;
+  top: 4%;
+  right: 2%;
+  display: block;
+  width: 44rem;
+  max-width: 82%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--ember-rgb), 0.17) 0%,
+    rgba(var(--ember-rgb), 0.07) 36%,
+    rgba(var(--monitor-rgb), 0.05) 60%,
+    transparent 76%
+  );
+  filter: blur(24px);
   animation: drift 42s ease-in-out infinite alternate;
-}
-
-.backdropImg {
-  object-fit: cover;
-  object-position: 50% 28%;
-  filter: blur(52px) saturate(0.55) brightness(0.62);
-  transform: scale(1.35);
-  opacity: 0.9;
 }
 
 @keyframes drift {
   from {
-    transform: translate3d(-1.5%, -1%, 0) scale(1.04);
+    transform: translate3d(-1.5%, -1%, 0) scale(1.02);
   }
   to {
-    transform: translate3d(1.5%, 1.5%, 0) scale(1.1);
+    transform: translate3d(1.5%, 1.5%, 0) scale(1.09);
   }
 }
 
-/* --- 2. The avatar plate ---------------------------------------------------
-   Anchored bottom-right and bleeding off both edges, so the room reads as
-   larger than the viewport. Feathered on every side that stays in frame.
+/* --- 2. The portrait -------------------------------------------------------
+   A transparent PNG, so the page colour — whichever theme is active — is what
+   sits behind him. That is the point of the cut-out: nothing here paints a
+   backdrop that could fight the theme.
+
+   Deliberately not full-bleed. The source is 440x566 and the old plate
+   rendered around 930px wide; stretching a head-and-shoulders portrait that
+   far would be soft on any display and mush on a dense one. Sized to sit near
+   its native resolution, which happens to be the right scale for a portrait
+   anyway — it reads as a considered crop rather than a stretched snapshot.
    -------------------------------------------------------------------------- */
 
 .plateWrap {
   position: absolute;
-  top: 0;
-  right: -3%;
-  bottom: -2%;
-  width: 58%;
+  right: 7%;
+  bottom: 0;
+  width: min(27rem, 33%);
   z-index: 1;
   will-change: transform;
 }
@@ -69,77 +84,23 @@
 .plate {
   position: relative;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-
-  /* Two gradients intersected: a hard left-edge dissolve into the page, and a
-     softer top/bottom falloff. Without this the plate reads as a rectangle
-     pasted on the page rather than light in a room. */
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 14%, #000 40%),
-    linear-gradient(to bottom, transparent 0%, #000 16%, #000 68%, transparent 99%);
-  mask-image:
-    linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.35) 14%, #000 40%),
-    linear-gradient(to bottom, transparent 0%, #000 16%, #000 68%, transparent 99%);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
 }
 
 .plateImg {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 16%;
-}
-
-/* --- 5. Light sweep --------------------------------------------------------
-   A soft warm highlight crossing the plate roughly every 12 seconds.
-   -------------------------------------------------------------------------- */
-
-.sweep {
-  position: absolute;
-  top: -20%;
-  bottom: -20%;
-  left: 0;
-  width: 42%;
-  pointer-events: none;
-  background: linear-gradient(
-    100deg,
-    rgba(var(--ember-rgb), 0) 0%,
-    rgba(var(--ember-rgb), 0.13) 42%,
-    rgba(var(--bone-rgb), 0.16) 52%,
-    rgba(var(--ember-rgb), 0.1) 62%,
-    rgba(var(--ember-rgb), 0) 100%
-  );
-  mix-blend-mode: screen;
-  filter: blur(14px);
-  opacity: 0;
-  animation: sweep 12s var(--ease-soft) infinite;
-}
-
-@keyframes sweep {
-  0% {
-    transform: translate3d(-160%, 0, 0);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.85;
-  }
-  26% {
-    opacity: 0.85;
-  }
-  36% {
-    transform: translate3d(300%, 0, 0);
-    opacity: 0;
-  }
-  100% {
-    transform: translate3d(300%, 0, 0);
-    opacity: 0;
-  }
+  height: auto;
+  /* The cut-out is cropped straight across the chest. Unmasked he ends on a
+     hard horizontal line; this lets him rise out of the page instead. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 66%, transparent 97%);
+  mask-image: linear-gradient(to bottom, #000 66%, transparent 97%);
 }
 
 /* --- 3. Vignette and scrim -------------------------------------------------
-   Text has to stay readable wherever the plate happens to crop.
+   Both of these existed to punch text out of a photograph that filled the
+   frame. Nothing sits under the text now, so they are pulled back to a
+   grounding wash: just enough to seat the hero against the section below it,
+   instead of greying the whole page — which is what the old values did once
+   the photo behind them was gone.
    -------------------------------------------------------------------------- */
 
 .vignette {
@@ -147,13 +108,11 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background:
-    radial-gradient(
-      130% 90% at 50% 45%,
-      transparent 38%,
-      rgba(var(--ink-rgb), 0.55) 100%
-    ),
-    linear-gradient(to bottom, rgba(var(--ink-rgb), 0.78) 0%, transparent 26%);
+  background: radial-gradient(
+    132% 94% at 50% 40%,
+    transparent 54%,
+    rgba(var(--ink-rgb), 0.4) 100%
+  );
 }
 
 .scrim {
@@ -161,17 +120,14 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background:
-    /* Reads the name against the plate on wide screens. */
-    linear-gradient(
-      to right,
-      rgba(var(--ink-rgb), 0.94) 0%,
-      rgba(var(--ink-rgb), 0.72) 34%,
-      rgba(var(--ink-rgb), 0.12) 62%,
-      transparent 78%
-    ),
-    /* Grounds the whole frame and hands off to the section below. */
-    linear-gradient(to bottom, transparent 55%, rgba(var(--ink-rgb), 0.86) 88%, var(--ink) 100%);
+  /* Hands the hero off to the first section, and settles the portrait's
+     lower edge into the page along with it. */
+  background: linear-gradient(
+    to bottom,
+    transparent 66%,
+    rgba(var(--ink-rgb), 0.72) 90%,
+    var(--ink) 100%
+  );
 }
 
 /* --- 4. Three.js canvas ---------------------------------------------------- */
@@ -333,36 +289,13 @@
   }
 
   .plateWrap {
-    inset: 0;
-    width: 100%;
-  }
-
-  .plate {
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 42%,
-      rgba(0, 0, 0, 0.35) 68%,
-      transparent 86%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 42%,
-      rgba(0, 0, 0, 0.35) 68%,
-      transparent 86%
-    );
-    -webkit-mask-composite: source-over;
-    mask-composite: add;
-  }
-
-  .plateImg {
-    /* At phone aspect ratios `cover` crops the sides, not the top and bottom,
-       so vertical framing is set by the scale origin rather than by
-       object-position. A lower origin lifts the face clear of the name. */
-    object-position: 50% 0%;
-    transform: scale(1.26);
-    transform-origin: 50% 46%;
+    /* The text block is bottom-aligned on a phone, so he sits above it rather
+       than behind it. Positioned, not transformed — the parallax loop writes
+       to this element's transform every frame and would overwrite centring. */
+    top: 6%;
+    right: 7%;
+    bottom: auto;
+    width: min(15rem, 46%);
   }
 
   .scrim {
@@ -403,10 +336,6 @@
   .controls {
     gap: var(--space-xs);
   }
-
-  .sweep {
-    width: 70%;
-  }
 }
 
 /* Very short landscape phones — drop the scroll cue rather than crowd it. */
@@ -421,40 +350,23 @@
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-  .backdrop {
+  .glow {
     animation: none;
-  }
-
-  .sweep {
-    animation: none;
-    opacity: 0;
   }
 }
 
 /* ==========================================================================
    Light theme
 
-   Most of the hero needs nothing here: the vignette and scrim are built from
-   rgba(var(--ink-rgb), …), so when --ink becomes paper they stop darkening
-   the frame and start lightening it — exactly the right direction, since the
-   text over them has flipped to dark too.
+   Almost nothing is needed here now. The vignette, scrim and glow are all
+   built from rgba(var(--…-rgb), …), so they re-theme on their own — and the
+   portrait is a cut-out, so the page colour simply shows through it rather
+   than being covered by a photograph tuned for one theme. That is exactly
+   what the transparent PNG buys.
 
-   What does need adjusting is the ambient backdrop, which was explicitly
-   dimmed for a dark page, and the grain, which is far more visible on paper.
-
-   The avatar plate itself stays a dark photograph. That is intentional: it
-   reads as a framed image bleeding into a light page rather than as a hole in
-   it, and it keeps the room recognisably the same room in both themes.
+   Only the grain needs a hand: overlay noise is far louder on paper.
    ========================================================================== */
 
-:root[data-theme='light'] .backdropImg {
-  /* brightness(0.62) existed to sink this behind a near-black page. Against
-     paper the same value reads as a grey smear. */
-  filter: blur(52px) saturate(0.5) brightness(1.2);
-  opacity: 0.42;
-}
-
 :root[data-theme='light'] .grain {
-  /* Overlay grain is much louder on a light ground. */
   opacity: 0.03;
 }

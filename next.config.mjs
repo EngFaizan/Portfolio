@@ -2,9 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    // 35 is the ambient hero backdrop, which is blurred to 52px and never
-    // needs detail. 75 is Next's default, used for the avatar plate itself.
-    qualities: [35, 75],
+    // The blurred hero backdrop that needed quality 35 is gone — a cut-out
+    // portrait has no room to defocus — so only Next's default remains.
+    qualities: [75],
   },
 };
 
