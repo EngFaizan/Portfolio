@@ -115,3 +115,52 @@
     transform: none;
   }
 }
+
+/* --- Mobile wordmark clearance ---------------------------------------------
+   On desktop the content column starts well right of this mark, so `difference`
+   blending is enough to keep it legible over whatever scrolls past. Below
+   768px the column runs the full width of the screen and passes directly
+   underneath: section eyebrows and body copy printed straight through the
+   mark. Here it gets its own glass chip — same recipe as GlassButton — so
+   content blurs behind it instead of overprinting it.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .wordmark {
+    mix-blend-mode: normal;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background: rgba(var(--ink-rgb), 0.62);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px) saturate(1.2);
+  }
+
+  .mark {
+    font-size: 1.15rem;
+  }
+
+  /* Retreats while the reader is going down, returns on the way back up.
+     Desktop never sets this — the mark is permanent there, because the
+     content column starts well clear of it. */
+  .wordmark[data-hidden='true'] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-0.65rem);
+  }
+
+  .wordmark {
+    transition:
+      opacity var(--dur-base) var(--ease-cinematic),
+      transform var(--dur-base) var(--ease-cinematic);
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .wordmark {
+    transition: opacity 0.01ms;
+  }
+
+  .wordmark[data-hidden='true'] {
+    transform: none;
+  }
+}

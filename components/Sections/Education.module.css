@@ -12,8 +12,8 @@
   border-radius: var(--radius);
   background: rgba(var(--surface-rgb), 0.65);
   border: 1px solid var(--hairline);
+  /* See GlassButton.module.css — the hand-written -webkit- twin kills this. */
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 .degreeName {

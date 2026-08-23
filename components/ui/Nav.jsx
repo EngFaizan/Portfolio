@@ -15,6 +15,7 @@ import styles from './Nav.module.css';
  */
 export default function Nav() {
   const [active, setActive] = useState(null);
+  const [markHidden, setMarkHidden] = useState(false);
 
   useEffect(() => {
     const order = new Map(sections.map(({ id }, i) => [id, i]));
@@ -60,12 +61,53 @@ export default function Nav() {
     return () => observer.disconnect();
   }, []);
 
+  // --- Mobile: get the wordmark out of the content's way ------------------
+  // Below 768px the content column runs the full width of the screen and
+  // passes directly under this mark. A scrim only occludes the text — the
+  // eyebrow still reads as chopped. So the mark retreats while the reader is
+  // going down and returns the moment they scroll back up, which is also when
+  // "back to top" is the thing they actually want. CSS applies this only at
+  // the mobile breakpoint; desktop keeps the mark permanently.
+  useEffect(() => {
+    let last = window.scrollY;
+    let frame = 0;
+
+    const evaluate = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const delta = y - last;
+
+      // Near the top there is nothing to collide with, and nothing to go back
+      // to. Ignore sub-pixel jitter and rubber-banding either side of that.
+      if (y < 120) setMarkHidden(false);
+      else if (delta > 2) setMarkHidden(true);
+      else if (delta < -2) setMarkHidden(false);
+
+      if (Math.abs(delta) > 2) last = y;
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(evaluate);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
   const toTop = () =>
     window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
 
   return (
     <>
-      <button type="button" className={styles.wordmark} onClick={toTop}>
+      <button
+        type="button"
+        className={styles.wordmark}
+        onClick={toTop}
+        data-hidden={markHidden ? 'true' : undefined}
+      >
         <span className={styles.mark}>FY</span>
         <span className="u-visually-hidden">
           {profile.fullName} — back to top

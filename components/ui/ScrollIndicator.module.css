@@ -69,3 +69,12 @@
     opacity: 0.7;
   }
 }
+
+/* Mobile — the hero's CTA row sits much closer above the cue than it does on
+   desktop. Shortening the track buys that clearance without pushing the name
+   block further up the screen. */
+@media (max-width: 767px) {
+  .track {
+    height: 2.25rem;
+  }
+}

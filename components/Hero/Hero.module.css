@@ -378,7 +378,14 @@
 
   .contentWrap {
     align-items: flex-end;
-    padding-bottom: clamp(4.5rem, 14vh, 7rem);
+    /* Must clear .chrome, which is ~5.25rem tall here plus its own bottom
+       offset. At 14vh the CTA row's box overlapped the scroll cue's, and
+       .chrome (z-index 6) sat above it — so the cue swallowed taps aimed at
+       the lower half of "Download resume". */
+    padding-bottom: clamp(6.75rem, 18vh, 8.5rem);
+    /* Belt and braces: if that clearance ever regresses under a different
+       font scale, the CTAs win the hit test rather than the scroll cue. */
+    z-index: 7;
   }
 
   .content {
